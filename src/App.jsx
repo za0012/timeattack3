@@ -8,15 +8,31 @@ function App() {
     const [view, setView] = useState(0);
     const queryClient = useQueryClient();
 
-    const aaa = async () => {
+    const getPosts = async () => {
         const response = await axios.get('http://localhost:4000/posts');
         return response.data;
     };
+  
+      const getProfile = async () => {
+          const response = await axios.get('http://localhost:4000/profile');
+          return response.data;
+      };
 
-    const { data, isError, isLoading } = useQuery({
+    const {
+        data: postDataaa,
+        isError,
+        isLoading,
+    } = useQuery({
         queryKey: ['posts'],
-        queryFn: aaa,
+        queryFn: getPosts,
     });
+  
+      const {
+          data: profileDataaa,
+      } = useQuery({
+          queryKey: ['posts'],
+          queryFn: getProfile,
+      });
 
     const addPost = async (newData) => {
         await axios.post('http://localhost:4000/posts', {
@@ -28,7 +44,7 @@ function App() {
     const mutation = useMutation({
         mutationFn: addPost,
         onSuccess: () => {
-            queryClient.invalidateQueries(['posts']);  //이부분도사실좀참고했다......
+            queryClient.invalidateQueries(['posts']); //이부분도사실좀참고했다......
         },
     });
 
@@ -55,8 +71,9 @@ function App() {
             >
                 제출
             </button>
-            {data.map((post) => {
-                return ( //여기리턴도 좀 참고했다.........
+            {postDataaa.map((post) => {
+                return (
+                    //여기리턴도 좀 참고했다.........
                     <div>
                         <p>
                             {post.title} {post.view}
